@@ -1041,10 +1041,63 @@ public final class Graphics {
 
 
 
+# try/catch/finally
+
+/* Exception 클래스는 모든 예외 클래스의 최상위 클래스이므로
+만약 아래 IOException catch 블록과 Exception catch 블록의 순서가 바뀌면 IOException은 절대 실행되지 않음 */
+try {
+    ...
+} catch(IOException e) {
+    ...
+} catch(Exception e) {
+     ...
+} finally {
+     ...
+}
+
+
+1. 오류가 나면 try 블록에서 해당 라인까지만 실행하고 이후는 실행 중단
+2. catch 블록 중에 발생한 예외를 처리할 수 있는 블록이 있는지 위에서부터 하나씩 찾음
+3. if 예외를 처리할 수 있는 catch 블록이 있다면
+        해당 catch 블록 안의 코드들이 실행
+        finally 블록 실행
+        try 블록 이후의 코드들이 실행됨
+   else // 예외를 처리할 수 있는 catch 블록이 없음
+     finally 블록 실행 후 한 단계 높은 try 문으로 이동
+     
+
+
+# 예외 다시 던지기(rethrow) : try-catch문으로 예외를 받았는데, 해당 catch문에서 예외처리를 안하고 바로 다른 곳으로 넘겨버리는 방법 => 가급적이면 쓰지 말자!
 
 
 
+# 나만의 예외 만들기
+public final class UserNotFoundException extends RunTimeException { // RunTimeException 클래스 상속
+    public UserNotFoundException() {
+        super(); // 자식 클래스에서 반드시 super로 부모 클래스를 호출해줘야 됨
+    }
 
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+
+    public UserNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
+
+
+# 자바 프로그램에서 예외처리를 안해줄 경우 발생하는 일
+발생한 오류에 대한 예외를 main() 메서드에서조차 처리를 해주지 않으면 JVM에서 예외를 받아서 프로그램 강제 종료를 시킴 
+
+
+
+# 만약, 함수마다 예외를 던진다면 함수 호출자는 각각의 함수에서 어떤 예외를 던질지 직접 함수 내부를 까봐야만 알 수 있으며, 이를 모두 확인해서 try-catch문으로 예외처리를 하는 것은 사실상 불가능
+=> 자바에서는 checked/unchecked 예외 기능을 통해 이를 일부 보완
+=> 하지만, 결국 중요한 것은 함수마다 예외를 던지는 것이 아니라, 함수 선언자와 호출자간에는 함수 시그내처, 함수명을 통해
+해당 함수가 어떤 인자를 필요로 하고, 어떤 기능을 하고, 어떤 것을 리턴하는지 서로 통신해야 하며 
+함수 내부에서 예외가 발생했을 경우 또한 에러코드같은 것이나 boolean 타입값을 리턴함으로써 함수 호출자에게 오류 상황을 알려주는 방법을 사용하는 것이 좋다! 
 
 
 
